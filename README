@@ -1,0 +1,17 @@
+# OCapN Website
+
+## Build
+
+To build you need guix, ensure you have the git submodules pulled
+
+``` sh
+$ git submodule init
+```
+
+Then to build the website, enter the guix shell and run `make`
+``` sh
+$ guix shell --container -m manifest.scm
+$ make
+```
+
+to build the site, the result will be in the `site` directory.

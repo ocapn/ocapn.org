@@ -3,4 +3,4 @@
 
 (packages->manifest
  (specifications->packages
-  (list "haunt")))
+  (list "nss-certs" "git" "coreutils" "make" "haunt")))

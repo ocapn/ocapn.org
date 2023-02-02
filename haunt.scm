@@ -14,8 +14,6 @@
              (srfi srfi-19)
              (ice-9 rdelim))
 
-(setlocale LC_ALL "en_US")
-
 (define-record-type <meeting>
   (make-meeting start-time end-time issue-number)
   meeting?

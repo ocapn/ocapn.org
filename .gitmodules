@@ -1,0 +1,3 @@
+[submodule "ocapn"]
+	path = ocapn
+	url = https://github.com/ocapn/ocapn.git
