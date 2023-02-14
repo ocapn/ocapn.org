@@ -98,7 +98,7 @@ are little different from any other asynchronous programming in the host
 language.")
      (li "A generalized \"netlayer\" interface and specifications of compatible
 implementations. OCapN's CapTP can be run over different \"netlayer\"
-implementations ranging from"
+implementations ranging from "
          ,(make-anchor "Tor Onion Services"
                       "https://2019.www.torproject.org/docs/onion-services.html.en")
 
