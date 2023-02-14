@@ -141,6 +141,8 @@ of:"
         (meta (@ (charset "utf-8")))
         (meta (@ (name "viewport") (content "width=device-width")))
         (link (@ (rel "stylesheet") (type "text/css") (href "/theme/style.css")))
+        (link (@ (rel "alternate") (type "application/atom") (href "/news.xml") (title "News")))
+        (link (@ (rel "alternate") (type "application/atom") (href "/minutes.xml") (title "Meeting Minutes")))
         (title ,page-title))
        (body
         (div (@ (id "main"))
@@ -272,10 +274,12 @@ of:"
                         `(("Meeting Minutes" ,meeting-minutes-filter)
                           ("News" ,news-filter)))
 
-                       (atom-feed #:subtitle "Meeting Minutes"
+                       (atom-feed #:file-name "minutes.xml"
+                                  #:subtitle "Meeting Minutes"
                                   #:max-entries 60
                                   #:filter meeting-minutes-filter)
-                       (atom-feed #:subtitle "News"
+                       (atom-feed #:file-name "news.xml"
+                                  #:subtitle "News"
                                   #:max-entries 60
                                   #:filter news-filter)
                        (static-directory "files")
