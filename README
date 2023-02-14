@@ -6,6 +6,7 @@ To build you need guix, ensure you have the git submodules pulled
 
 ``` sh
 $ git submodule init
+$ git submodule update
 ```
 
 Then to build the website, enter the guix shell and run `make`
