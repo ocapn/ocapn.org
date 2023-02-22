@@ -3,4 +3,4 @@
 
 (packages->manifest
  (specifications->packages
-  (list "nss-certs" "git" "coreutils" "make" "haunt")))
+  (list "nss-certs" "git" "coreutils" "make" "haunt" "rsync")))
