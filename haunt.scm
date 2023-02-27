@@ -259,7 +259,7 @@ of:"
             (list serialized-homepage))))
 
 (site #:title "OCapN Pre-standardization Group"
-      #:domain "ocapn.org" ;; TODO: is this right?
+      #:domain "ocapn.org"
       #:default-metadata
       '((author . "Jessica Tallon")
         (email . "tsyesika@tsyesika.se"))
