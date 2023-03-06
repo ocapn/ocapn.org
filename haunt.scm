@@ -64,8 +64,8 @@
 
 
 (define next-meeting
-  (make-meeting (make-date 0 0 0 20 23 2 2023 0)
-                (make-date 0 0 0 21 23 2 2023 0)
+  (make-meeting (make-date 0 0 0 19 24 3 2023 0)
+                (make-date 0 0 0 20 24 3 2023 0)
                 32))
 
 ;; Sanity check the meeting time, don't forget to update it.
@@ -82,7 +82,7 @@
        (strong ,(make-time/time-only (meeting-start-time next-meeting)))
        " and "
        (strong ,(make-time/time-only (meeting-end-time next-meeting)))
-       ". If you'd like to join us, find more information on "
+       " UTC. If you'd like to join us, find more information on "
        ,(make-anchor "the GitHub issue"
                      (string-append "https://github.com/ocapn/ocapn/issues/"
                                     (number->string (meeting-issue-number next-meeting)))))))
