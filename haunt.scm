@@ -66,7 +66,7 @@
 (define next-meeting
   (make-meeting (make-date 0 0 0 19 24 3 2023 0)
                 (make-date 0 0 0 20 24 3 2023 0)
-                32))
+                36))
 
 ;; Sanity check the meeting time, don't forget to update it.
 (let ((now (time-second (current-time)))
