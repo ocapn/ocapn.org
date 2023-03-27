@@ -3,7 +3,7 @@ haunt: haunt.scm
 	# TODO: For some reason this file breaks the build
 	rm posts/minutes/2021-09-24.md
 	# Build site
-	haunt build
+	LANG=en_US.utf8 haunt build
 
 upload: haunt
 	rsync --delete --recursive --verbose \
