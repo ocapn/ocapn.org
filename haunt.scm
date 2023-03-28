@@ -189,9 +189,12 @@ of:"
    posts))
 
 (define (meeting-minutes-filter posts)
-  (filter
-   (lambda (post) (string-prefix? "posts/minutes" (post-file-name post)))
-   posts))
+  (define filtered
+    (filter
+      (lambda (post) (string-prefix? "posts/minutes" (post-file-name post)))
+      posts))
+  ;; Sort them so that the most recent meeting comes first.
+  (sort filtered (lambda (a b) (string> (post-file-name a) (post-file-name b)))))
 
 (define (make-meeting-commonmark-reader)
   (define (filename->date filename)
