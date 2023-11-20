@@ -64,9 +64,9 @@
 
 
 (define next-meeting
-  (make-meeting (make-date 0 0 0 19 10 10 2023 0)
-                (make-date 0 0 0 20 10 10 2023 0)
-                83))
+  (make-meeting (make-date 0 0 0 19 12 12 2023 0)
+                (make-date 0 0 0 20 12 12 2023 0)
+                99))
 
 ;; Sanity check the meeting time, don't forget to update it.
 (let ((now (time-second (current-time)))
@@ -115,7 +115,7 @@ implementations ranging from "
 cards.")
      (li "A URI structure for addressing machines and specific objects on
 machines."))
-    (p "The group does it's work mainly on our "
+    (p "The group does its work mainly on our "
        ,(make-anchor "GitHub"
                     "https://github.com/ocapn/ocapn/")
        " page, if you're interested in joining us head over there for more
