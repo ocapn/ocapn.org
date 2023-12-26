@@ -64,8 +64,8 @@
 
 
 (define next-meeting
-  (make-meeting (make-date 0 0 0 19 12 12 2023 0)
-                (make-date 0 0 0 20 12 12 2023 0)
+  (make-meeting (make-date 0 0 0 19 9 1 2024 0)
+                (make-date 0 0 0 20 9 1 2024 0)
                 99))
 
 ;; Sanity check the meeting time, don't forget to update it.
