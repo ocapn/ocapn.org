@@ -153,9 +153,9 @@ of:"
              (h1 (@ (id "title") (class "heading")) ,(site-title site))
              (nav (@ (class "menu"))
               (ul
-               (li ,(make-anchor "Home" "/"))
                (li ,(make-anchor "GitHub" "https://github.com/ocapn/ocapn"))
-               (li (a (@ (style "color:gray")) "Draft Specifications"))))
+               (li ,(make-anchor "Draft Specifications" "https://github.com/ocapn/ocapn/tree/main/draft-specifications"))
+               (li ,(make-anchor "Implementation Guide" "https://github.com/ocapn/ocapn/blob/main/implementation-guide/Implementation%20Guide.md"))))
              (div)
              ,body)))))
 
