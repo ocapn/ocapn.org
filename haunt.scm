@@ -64,9 +64,9 @@
 
 
 (define next-meeting
-  (make-meeting (make-date 0 0 0 19 9 1 2024 0)
-                (make-date 0 0 0 20 9 1 2024 0)
-                99))
+  (make-meeting (make-date 0 0 0 19 14 01 2025 0)
+                (make-date 0 0 0 20 14 01 2025 0)
+                0))
 
 ;; Sanity check the meeting time, don't forget to update it.
 (let ((now (time-second (current-time)))
@@ -82,10 +82,14 @@
        (strong ,(make-time/time-only (meeting-start-time next-meeting)))
        " and "
        (strong ,(make-time/time-only (meeting-end-time next-meeting)))
-       " UTC. If you'd like to join us, find more information on "
-       ,(make-anchor "the GitHub issue"
-                     (string-append "https://github.com/ocapn/ocapn/issues/"
-                                    (number->string (meeting-issue-number next-meeting)))))))
+       " UTC."
+
+       ,(if (meeting-issue-number next-meeting)
+            (list " If you'd like to join us, find more information on "
+                  (make-anchor "the GitHub issue"
+                               (format #f "https://github.com/ocapn/ocapn/issues/~a"
+                                       (meeting-issue-number next-meeting))))
+            ""))))
 
 (define ocapn-intro
   `((p "We are a group focused on converging and working on pre-standardization
