@@ -10,33 +10,16 @@
              (haunt reader commonmark)
              (haunt builder assets)
              (srfi srfi-1)
-             (srfi srfi-9)
              (srfi srfi-19)
              (ice-9 rdelim))
 
-(define-record-type <meeting>
-  (make-meeting start-time end-time issue-number)
-  meeting?
-  (start-time meeting-start-time)
-  (end-time meeting-end-time)
-  (issue-number meeting-issue-number))
 
 (define (post->relative-url site post)
   (let ((filename (post-file-name post))
         (slug (site-post-slug site post)))
     (cond [(string-prefix? "posts/news" filename)
            (string-append "news/" slug ".html")]
-          [(string-prefix? "posts/minutes" filename)
-           (string-append "meeting-minutes/" slug ".html")]
           [else (error "Unknown type of post" post filename)])))
-
-(define (make-anchor text link)
-  `(a (@ (href ,link)) ,text))
-
-(define (make-box title content)
-  `(div (@ (class "box"))
-    (h2 (@ (class "heading")) ,title)
-    ,content))
 
 (define (number->ordinal-number-suffix num)
   (let ((ones (modulo num 10)))
@@ -62,34 +45,13 @@
   `(time (@ (datetime ,(date->string time "~H:~M")))
     ,(date->string time "~H:~M (~I:~M ~p)")))
 
+(define (make-anchor text link)
+  `(a (@ (href ,link)) ,text))
 
-(define next-meeting
-  (make-meeting (make-date 0 0 0 19 14 01 2025 0)
-                (make-date 0 0 0 20 14 01 2025 0)
-                0))
-
-;; Sanity check the meeting time, don't forget to update it.
-(let ((now (time-second (current-time)))
-      (next-meeting-start
-       (time-second (date->time-monotonic (meeting-start-time next-meeting)))))
-  (when (< next-meeting-start now)
-    (error "The next meeting is in the past, please update the next meeting time.")))
-
-(define next-meeting-info
-  `((p "Our next meeting is on "
-       (strong ,(make-time/date-only (meeting-start-time next-meeting)))
-       " between "
-       (strong ,(make-time/time-only (meeting-start-time next-meeting)))
-       " and "
-       (strong ,(make-time/time-only (meeting-end-time next-meeting)))
-       " UTC."
-
-       ,(if (meeting-issue-number next-meeting)
-            (list " If you'd like to join us, find more information on "
-                  (make-anchor "the GitHub issue"
-                               (format #f "https://github.com/ocapn/ocapn/issues/~a"
-                                       (meeting-issue-number next-meeting))))
-            ""))))
+(define (make-box title content)
+  `(div (@ (class "box"))
+    (h2 (@ (class "heading")) ,title)
+    ,content))
 
 (define ocapn-intro
   `((p "We are a group focused on converging and working on pre-standardization
@@ -135,6 +97,11 @@ of:"
        ,(make-anchor "libera.chat" "https://libera.chat")
        " (" ,(make-anchor "channel logs" "https://logs.guix.gnu.org/ocapn/") ")"))))
 
+(define next-meeting
+  `((p "The meetings are held on the 2nd Tuesday of every month, please refer to the "
+       ,(make-anchor "issue tracker" "https://github.com/ocapn/ocapn/issues?q=is%3Aissue%20state%3Aopen%20in%3Atitle%20meeting")
+       " for more information.")
+    (p "Anyone who'd like to participate is welcome.")))
 
 (define (ocapn-website-theme)
   (define (layout site page-title body)
@@ -146,7 +113,6 @@ of:"
         (meta (@ (name "viewport") (content "width=device-width")))
         (link (@ (rel "stylesheet") (type "text/css") (href "/theme/style.css")))
         (link (@ (rel "alternate") (type "application/atom") (href "/news.xml") (title "News")))
-        (link (@ (rel "alternate") (type "application/atom") (href "/minutes.xml") (title "Meeting Minutes")))
         (title ,page-title))
        (body
         (div (@ (id "main"))
@@ -154,6 +120,7 @@ of:"
              (nav (@ (class "menu"))
               (ul
                (li ,(make-anchor "GitHub" "https://github.com/ocapn/ocapn"))
+               (li ,(make-anchor "Past Meeting Minutes" "https://github.com/ocapn/ocapn/tree/main/meeting-minutes"))
                (li ,(make-anchor "Draft Specifications" "https://github.com/ocapn/ocapn/tree/main/draft-specifications"))
                (li ,(make-anchor "Implementation Guide" "https://github.com/ocapn/ocapn/blob/main/implementation-guide/Implementation%20Guide.md"))))
              (div)
@@ -172,7 +139,7 @@ of:"
       ,(make-anchor
         (post-ref post 'title)
         (post->relative-url site post))))
-  
+
   (define (collection site title posts url-prefix)
     (make-box
      title
@@ -192,36 +159,6 @@ of:"
    (lambda (post) (string-prefix? "posts/news" (post-file-name post)))
    posts))
 
-(define (meeting-minutes-filter posts)
-  (define filtered
-    (filter
-      (lambda (post) (string-prefix? "posts/minutes" (post-file-name post)))
-      posts))
-  ;; Sort them so that the most recent meeting comes first.
-  (sort filtered (lambda (a b) (string> (post-file-name a) (post-file-name b)))))
-
-(define (make-meeting-commonmark-reader)
-  (define (filename->date filename)
-    (string->date
-     (last (string-split filename #\/))
-     "~Y-~m-~d.md"))
-  (define (filename->title filename)
-    (date->string (filename->date filename)
-                  "~B ~Y"))
-
-  (make-reader
-   (lambda (filename) (and (string-prefix? "posts/minutes" filename)
-                      (string-suffix? ".md" filename)))
-   (lambda (filename)
-     (values `((title . ,(filename->title filename))
-               (date . ,(filename->date filename)))
-             (call-with-input-file filename
-               (lambda (port)
-                 ;; For asthetic reasons, read the first line of the
-                 ;; markdown file as it'll be the title, we use our own.
-                 (unless (string-prefix? "#" (read-line port))
-                   (error "The minutes file doesn't begin with a title element" filename))
-                 (commonmark->sxml port)))))))
 
 (define* (ocapn-homepage theme #:key (title "") (boxes '()) (collections '()))
   (define layout (theme-layout theme))
@@ -270,21 +207,15 @@ of:"
       #:default-metadata
       '((author . "Jessica Tallon")
         (email . "tsyesika@tsyesika.se"))
-      #:readers (list (make-meeting-commonmark-reader) commonmark-reader)
+      #:readers (list commonmark-reader)
       #:builders (list (ocapn-homepage
                         (ocapn-website-theme)
                         #:title "OCapN Pre-standardization Group"
                         #:boxes
                         `(("OCapN" ,ocapn-intro)
-                          ("Next Meeting" ,next-meeting-info))
+                          ("Next Meeting" ,next-meeting))
                         #:collections
-                        `(("Meeting Minutes" ,meeting-minutes-filter)
-                          ("News" ,news-filter)))
-
-                       (atom-feed #:file-name "minutes.xml"
-                                  #:subtitle "Meeting Minutes"
-                                  #:max-entries 60
-                                  #:filter meeting-minutes-filter)
+                        `(("News" ,news-filter)))
                        (atom-feed #:file-name "news.xml"
                                   #:subtitle "News"
                                   #:max-entries 60
