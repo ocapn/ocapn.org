@@ -62,6 +62,16 @@ This protocol allows for networked programming which, with the appropriate
 tooling, has the convenience of programming against \"networked objects\" which
 are little different from any other asynchronous programming in the host
 language.")
+     (li "3" (sup "rd") " party handoffs: These allow peers to seamlessly and
+securely hand off references to actors/objects on other peers. This is
+implemented taking a certificate based approach (a walkthrough of 3" (sup "rd")
+ " party handoffs was done at January 2023's meeting. The recording is available
+on "
+   ,(make-anchor "PeerTube" "https://share.tube/w/44DhG6pcEyCFgnUHhxnUTn")
+   " or "
+   ,(make-anchor "YouTube" "https://www.youtube.com/watch?v=rQJB6MSmang")
+   ". The " ,(make-anchor "slides" "/files/spritely-goblins-third-party-handoffs-implementation.pdf")
+   " are also available).")
      (li "A generalized \"netlayer\" interface and specifications of compatible
 implementations. OCapN's CapTP can be run over different \"netlayer\"
 implementations ranging from "
@@ -81,6 +91,13 @@ implementations ranging from "
 cards.")
      (li "A URI structure for addressing machines and specific objects on
 machines."))
+    (p "There are several implementations of OCapN:"
+       ;; Please keep alphabetically sorted.
+       (ul
+	(li ,(make-anchor "DObjects (Dart)" "https://codeberg.org/ridley/DObjects"))
+	(li ,(make-anchor "Endo (JavaScript)" "https://github.com/endojs/endo/tree/master/packages/captp"))
+        (li ,(make-anchor "Goblins (Guile)" "https://codeberg.org/spritely/goblins/src/branch/main/goblins/ocapn"))
+        (li ,(make-anchor "Goblins (Racket)" "https://codeberg.org/spritely/racket-goblins/src/branch/master/goblins/ocapn"))))
     (p "The group does its work mainly on our "
        ,(make-anchor "GitHub"
                     "https://github.com/ocapn/ocapn/")
@@ -112,7 +129,6 @@ of:"
         (meta (@ (charset "utf-8")))
         (meta (@ (name "viewport") (content "width=device-width")))
         (link (@ (rel "stylesheet") (type "text/css") (href "/theme/style.css")))
-        (link (@ (rel "alternate") (type "application/atom") (href "/news.xml") (title "News")))
         (title ,page-title))
        (body
         (div (@ (id "main"))
@@ -154,34 +170,12 @@ of:"
          #:post-template post
          #:collection-template collection))
 
-(define (news-filter posts)
-  (filter
-   (lambda (post) (string-prefix? "posts/news" (post-file-name post)))
-   posts))
-
 
 (define* (ocapn-homepage theme #:key (title "") (boxes '()) (collections '()))
   (define layout (theme-layout theme))
   (define collection-template (theme-collection-template theme))
   (define post-template (theme-post-template theme))
   (lambda (site posts)
-    (define (render-post post)
-      (serialized-artifact
-       (post->relative-url site post)
-       (layout site (post-ref post 'title) (post-template post))
-       sxml->html))
-
-    ;; Build all the collections
-    (define rendered-collections
-      (map
-       (lambda (collection)
-         (define matched-posts
-           ((car (cdr collection)) posts))
-         (if (null? matched-posts)
-             '()
-             (collection-template site (car collection) matched-posts "/")))
-       collections))
-
     ;; Build all the content in boxes
     (define rendered-boxes
       (map
@@ -196,11 +190,10 @@ of:"
        (layout
         site
         title
-        (append rendered-boxes rendered-collections))
+        (append rendered-boxes))
        sxml->html))
 
-    (append (map render-post posts)
-            (list serialized-homepage))))
+    (append (list serialized-homepage))))
 
 (site #:title "OCapN Pre-standardization Group"
       #:domain "ocapn.org"
@@ -213,12 +206,6 @@ of:"
                         #:title "OCapN Pre-standardization Group"
                         #:boxes
                         `(("OCapN" ,ocapn-intro)
-                          ("Next Meeting" ,next-meeting))
-                        #:collections
-                        `(("News" ,news-filter)))
-                       (atom-feed #:file-name "news.xml"
-                                  #:subtitle "News"
-                                  #:max-entries 60
-                                  #:filter news-filter)
+                          ("Meetings" ,next-meeting)))
                        (static-directory "files")
                        (static-directory "theme")))
